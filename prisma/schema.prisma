@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  password     String
+  fullName     String
+  role         Role
+  photoProfile String?
+  transaction  Transaction[]
+  product      Product[]
+  cart         Cart[]
+}
+
+model Cart {
+  id         String  @id @default(uuid())
+  qty        Int
+  totalPrice Int
+  userId     String
+  productId  String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product    Product @relation(fields: [productId], references: [id])
+}
+
+model Product {
+  id           String  @id @default(uuid())
+  nameProduct  String
+  stock        Int
+  price        Float
+  description  String
+  productPhoto String?
+  userId       String
+  cart         Cart[]
+  user         User?   @relation(fields: [userId], references: [id])
+}
+
+model Transaction {
+  id           String            @id @default(uuid())
+  name         String
+  email        String
+  phone        String
+  postCode     Int?
+  address      String
+  attachment   String
+  pay          Boolean
+  productOrder String
+  productPrice Int
+  status       TransactionStatus
+  action       Boolean
+  userId       String           
+  user         User              @relation(fields: [userId], references: [id])
+}
+
+enum TransactionStatus {
+  WAITING_APPROVE
+  SHIPPED
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+  CANCELLED
+}
+
+enum Role {
+  BUYER
+  SELLER
+}

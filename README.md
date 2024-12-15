@@ -23,6 +23,9 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
+
+# swagger running
+http://localhost:8000/api#/
 ```
 
 ## Test

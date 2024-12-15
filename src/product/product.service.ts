@@ -68,6 +68,12 @@ export class ProductService {
   }
 
   async remove(id: string) {
+    await this.prisma.cart.deleteMany({
+      where: {
+        productId: id,
+      },
+    });
+
     return this.prisma.product.deleteMany({
       where: {
         id: id,

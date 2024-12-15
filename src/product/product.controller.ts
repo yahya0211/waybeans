@@ -22,7 +22,16 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorators';
 import { Role } from 'src/auth/enums/role.enum';
+import {
+  ApiTags,
+  ApiCreatedResponse,
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiBody,
+} from '@nestjs/swagger';
 
+@ApiTags('Product')
 @Controller('product')
 export class ProductController {
   constructor(
@@ -30,9 +39,22 @@ export class ProductController {
     private readonly jwtService: JwtService,
   ) {}
 
+
+  @ApiCreatedResponse({
+    status: 201,
+    description: 'The product has been successfully created.',
+    type: CreateProductDto,
+  })
+  @ApiBadRequestResponse({ description: 'Product is availabale', status: 400 })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SELLER)
   @Post('addProducts')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Create product',
+    type: CreateProductDto,
+  })
   @UseInterceptors(FileInterceptor('file'))
   async create(
     @Body() dto: CreateProductDto,
@@ -72,6 +94,18 @@ export class ProductController {
     return this.productService.update(+id, updateProductDto);
   }
 
+  @ApiBearerAuth()
+  @ApiCreatedResponse({
+    status: 201,
+    description: 'The product has been successfully deleted.',
+    type: CreateProductDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Delete product unsuccessful',
+    status: 400,
+  })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SELLER)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.productService.remove(id);

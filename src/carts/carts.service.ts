@@ -92,7 +92,6 @@ export class CartsService {
           product: true,
         },
       });
-      console.log(findCart);
 
       if (!findCart.product || findCart.product.stock <= 0) {
         throw new HttpException('Stock is not available', HttpStatus.CONFLICT);

@@ -26,13 +26,14 @@ model User {
 }
 
 model Cart {
-  id         String  @id @default(uuid())
-  qty        Int
-  totalPrice Int
-  userId     String
-  productId  String
-  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product    Product @relation(fields: [productId], references: [id])
+  id          String        @id @default(uuid())
+  qty         Int
+  totalPrice  Int
+  userId      String
+  productId   String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product     Product       @relation(fields: [productId], references: [id])
+  transaction Transaction[]
 }
 
 model Product {
@@ -52,16 +53,17 @@ model Transaction {
   name         String
   email        String
   phone        String
-  postCode     Int?
+  postCode     String
   address      String
-  attachment   String
-  pay          Boolean
-  productOrder String
+  attachment   String?
+  pay          Boolean?
   productPrice Int
   status       TransactionStatus
-  action       Boolean
-  userId       String           
+  action       Boolean?
+  userId       String
   user         User              @relation(fields: [userId], references: [id])
+  cartId       String
+  cart         Cart              @relation(fields: [cartId], references: [id])
 }
 
 enum TransactionStatus {

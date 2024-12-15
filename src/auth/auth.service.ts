@@ -47,9 +47,11 @@ export class AuthService {
     });
   }
 
-  async validateUser(email: string, password: string): Promise<User | null> {
-    this.logger.log(`Finding user by email: ${email}`);
-    const user = await this.prisma.user.findFirst({ where: { email } });
+  async validateUser(username: string, password: string): Promise<User | null> {
+    this.logger.log(`Finding user by email: ${username}`);
+    const user = await this.prisma.user.findFirst({
+      where: { email: username },
+    });
 
     if (user && (await bcrypt.compare(password, user.password))) {
       return user;
@@ -64,13 +66,6 @@ export class AuthService {
     const existingUser = await this.prisma.user.findFirst({
       where: {
         email: dto.email,
-      },
-      include: {
-        cart: {
-          select: {
-            id: true,
-          },
-        },
       },
     });
 
@@ -96,7 +91,6 @@ export class AuthService {
 
     return {
       accessToken: await this.jwtService.sign(payload),
-      user: existingUser,
     };
   }
 
@@ -108,14 +102,6 @@ export class AuthService {
       },
     });
     return user;
-  }
-
-  findAll() {
-    return `This action returns all auth`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
   }
 
   async updateUser(
@@ -163,7 +149,13 @@ export class AuthService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async findAll() {
+    return this.prisma.user.findMany();
+  }
+
+  async remove(id: string) {
+    return this.prisma.user.delete({
+      where: { id },
+    });
   }
 }

@@ -6,15 +6,3 @@ export enum TransactionStateus {
   DELIVERED = 'DELIVERED',
   RETURNED = 'RETURNED',
 }
-
-export class Transaction {
-  id: string;
-  userId: string;
-  name: string;
-  email: string;
-  phone: string;
-  postCode: string;
-  address: string;
-  attachment: string;
-  transactionStateus: string;
-}

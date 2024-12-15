@@ -19,7 +19,20 @@ import { JwtService } from '@nestjs/jwt';
 import { Roles } from 'src/auth/decorators/roles.decorators';
 import { Role } from 'src/auth/enums/role.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiBadRequestResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('Carts')
+@ApiBearerAuth()
+@ApiUnauthorizedResponse({
+  status: 401,
+  description: 'Unauthorized',
+})
 @Controller('carts')
 export class CartsController {
   constructor(
@@ -27,6 +40,12 @@ export class CartsController {
     private readonly jwtService: JwtService,
   ) {}
 
+  @ApiCreatedResponse({
+    status: 201,
+    description: 'The cart has been successfully created.',
+    type: CreateCartDto,
+  })
+  @ApiBadRequestResponse({ description: 'Product is availabale', status: 400 })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BUYER)
   @Post(':productId')
@@ -42,7 +61,6 @@ export class CartsController {
 
     try {
       const decode = this.jwtService.decode(token);
-      console.log(decode);
 
       createCartDto.userId = decode.id;
 
@@ -62,7 +80,6 @@ export class CartsController {
   @Get()
   async findAll(@Request() req) {
     const userId = req.user.id;
-    console.log(userId);
 
     return this.cartsService.findAll(userId);
   }
@@ -74,6 +91,12 @@ export class CartsController {
     return this.cartsService.findOne(id);
   }
 
+  @ApiCreatedResponse({
+    status: 201,
+    description: 'The cart has been successfully updated.',
+    type: UpdateCartDto,
+  })
+  @ApiBadRequestResponse({ description: 'Cart is undefined', status: 400 })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.BUYER)
   @Patch(':id')

@@ -66,8 +66,10 @@ export class ProductController {
       throw new UnauthorizedException('token invalid');
     }
 
+
     try {
       const decoded = this.jwtService.decode(token);
+      
 
       const userId = decoded.id;
 

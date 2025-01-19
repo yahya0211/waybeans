@@ -32,6 +32,7 @@ import { Roles } from 'src/auth/decorators/roles.decorators';
 import { Role } from 'src/auth/enums/role.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
@@ -56,8 +57,7 @@ export class TransactionController {
     description: 'Product is not available',
     status: 400,
   })
-  @ApiBasicAuth('basic')
-  // @UseGuards(LocalAuthGuard)
+  @UseGuards(JwtAuthGuard) // @UseGuards(LocalAuthGuard)
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
   async create(
@@ -73,6 +73,7 @@ export class TransactionController {
 
       createTransactionDto.userId = decode.id;
       createTransactionDto.cartId = cartId;
+      req.headers.authorization = process.env.MIDTRANS_SERVER_KEY;
 
       const transaction = await this.transactionService.create(
         createTransactionDto,

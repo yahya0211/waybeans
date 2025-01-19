@@ -38,8 +38,8 @@ export class CartsService {
         data: {
           productId: existProduct.id,
           userId: dto.userId,
-          qty: 0,
-          totalPrice: 0,
+          qty: 1,
+          totalPrice: existProduct.price,
         },
       });
 

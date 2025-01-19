@@ -12,6 +12,7 @@ export const useLoginFunction = ({ reset }: IProps) => {
 
   const onSubmit: SubmitHandler<ILoginForm> = (data) => {
     dispatch(loginAsync(data));
+    reset();
   };
 
   const onErrorSubmit: SubmitErrorHandler<ILoginForm> = (data) => {

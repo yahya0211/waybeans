@@ -3,6 +3,7 @@ import { useAppSelector, RootState, useAppDispatch } from "../../../redux";
 import { useEffect } from "react";
 import { fetchProduct } from "../../../redux/async/products";
 import { NavLink } from "react-router-dom";
+import * as motion from "motion/react-client";
 
 const Product = () => {
   const mappingProduct = useAppSelector((state: RootState) => state.product.product);
@@ -12,8 +13,66 @@ const Product = () => {
     dispatch(fetchProduct());
   }, []);
 
-  if (!Array.isArray(mappingProduct) || mappingProduct.length === 0) {
-    return <Typography>No products available</Typography>;
+  const boxStyle = {
+    width: "50px",
+    height: "50px",
+    background: "linear-gradient(135deg, #f2709c, #ff9472)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: "10px",
+  };
+
+  if (mappingProduct.length === 0){
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "30vh",
+          flexDirection: "column",
+          gap: "10px",
+        }}
+      >
+        <motion.div
+          animate={{
+            scale: [1, 1.5, 1.5, 1, 1],
+            rotate: [0, 0, 270, 270, 0],
+            borderRadius: ["20%", "50%", "50%", "20%", "20%"],
+          }}
+          transition={{
+            duration: 1.5,
+            ease: "easeInOut",
+            times: [0, 0.25, 0.5, 0.75, 1],
+            repeat: Infinity,
+            repeatDelay: 0.5,
+          }}
+          style={boxStyle}
+        />
+  
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0.3, 1, 0.3] }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+          }}
+        >
+          <Typography
+            variant="h6"
+            style={{
+              color: "#613D2B",
+              fontWeight: "bold",
+              letterSpacing: "1px",
+            }}
+          >
+            Now Loading...
+          </Typography>
+        </motion.div>
+      </div>
+    );
   }
 
   return (
@@ -24,7 +83,7 @@ const Product = () => {
             key={item.id}
             sx={{
               height: 450,
-              width: 230,
+              width: 211,
               bgcolor: "#F6E6DA",
               transition: "transform 0.2s, box-shadow 0.2s",
               "&:hover": {

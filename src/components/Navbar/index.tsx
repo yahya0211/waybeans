@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { RootState, useAppDispatch, useAppSelector } from "../../redux";
 import * as React from "react";
 import { useEffect } from "react";
-import { AddShoppingCartOutlined, PersonOffOutlined } from "@mui/icons-material";
+import { AddShoppingCartOutlined } from "@mui/icons-material";
 import { findProfile } from "../../redux/async/auth";
 import { LOGOUT } from "../../redux/slice/auth";
 
@@ -15,10 +15,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
-  };
-
-  const handleClick = (e: any) => {
-    setAnchorElUser(e.currentTarget);
   };
 
   const handleLogout = () => {
@@ -97,7 +93,7 @@ const Navbar = () => {
               </Grid>
             ) : (
               <Box display={"flex"} gap={2}>
-                <NavLink to="/cart">
+                <NavLink to="/carts">
                   <AddShoppingCartOutlined />
                 </NavLink>
                 <Tooltip title="Open settings">

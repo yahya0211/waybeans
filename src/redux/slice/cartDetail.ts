@@ -7,7 +7,7 @@ const initialState: { cart: ICart } = {
 };
 
 const cartDetailSlice = createSlice({
-  name: "carts",
+  name: "cart",
   initialState,
   reducers: {},
   extraReducers: (builder) => {

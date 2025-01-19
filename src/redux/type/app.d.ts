@@ -3,6 +3,7 @@ export interface IProduct {
   nameProduct: string;
   stock: number;
   price: number;
+  qty: number;
   description: string;
   productPhoto: string;
 }
@@ -28,7 +29,7 @@ export interface ICart {
   productId: string;
   qty: number;
   totalPrice: number;
-  product: { IProduct };
+  product: IProduct;
 }
 
 enum Role {

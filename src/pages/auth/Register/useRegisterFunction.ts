@@ -13,6 +13,8 @@ export const UseRegister = ({ reset }: IProps) => {
     try {
       const res = await API.post("/auth/register", data);
       navigate("/auth/login");
+      reset();
+      return res;
     } catch (error) {
       console.log("error on:", error);
     }

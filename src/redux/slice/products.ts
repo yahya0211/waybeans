@@ -11,6 +11,7 @@ const initialState: IProductState = {
     price: 0,
     productPhoto: "",
     stock: 0,
+    qty: 0,
   },
   error: null,
   isLoading: false,

@@ -1,7 +1,6 @@
 import { Box, Typography, TextField, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { Controller } from "react-hook-form";
-import React from "react";
 import { useRegisterValidate } from "../../../lib/validation/useRegistervalidation";
 import { UseRegister } from "./useRegisterFunction";
 

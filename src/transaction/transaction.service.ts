@@ -16,10 +16,11 @@ export class TransactionService {
   ) {}
   async create(
     createTransactionDto: CreateTransactionDto,
-    cartId: string,
     file: Express.Multer.File,
-  ) {
+    cartId: string,
+  ): Promise<any> {
     try {
+
       const findCarts = await this.prisma.cart.findFirst({
         where: { id: cartId },
         include: {
@@ -34,7 +35,9 @@ export class TransactionService {
 
       let imageUrl: string = createTransactionDto.attachment || '';
       if (file) {
+
         const filePath = file as unknown as Express.Multer.File;
+        
 
         const cloudinaryUpload = await cloudinary.uploader.upload(
           filePath.path,
@@ -120,7 +123,7 @@ export class TransactionService {
 
       return payment;
     } catch (error) {
-      console.log(error);
+      console.log('error on service', error);
       throw error;
     }
   }

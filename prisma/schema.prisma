@@ -23,6 +23,9 @@ model User {
   transaction  Transaction[]
   product      Product[]
   cart         Cart[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now())
+  deletedAt    DateTime      @default(now())
 }
 
 model Cart {
@@ -34,10 +37,13 @@ model Cart {
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   product     Product       @relation(fields: [productId], references: [id])
   transaction Transaction[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now())
+  deletedAt   DateTime      @default(now())
 }
 
 model Product {
-  id           String  @id @default(uuid())
+  id           String   @id @default(uuid())
   nameProduct  String
   stock        Int
   price        Float
@@ -45,7 +51,10 @@ model Product {
   productPhoto String?
   userId       String
   cart         Cart[]
-  user         User?   @relation(fields: [userId], references: [id])
+  user         User?    @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  deletedAt    DateTime @default(now())
 }
 
 model Transaction {
@@ -64,6 +73,9 @@ model Transaction {
   user         User              @relation(fields: [userId], references: [id])
   cartId       String
   cart         Cart              @relation(fields: [cartId], references: [id])
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @default(now())
+  deletedAt    DateTime          @default(now())
 }
 
 enum TransactionStatus {

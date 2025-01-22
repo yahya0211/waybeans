@@ -7,6 +7,7 @@ import { CartsModule } from './carts/carts.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { MidtransModule } from './midtrans/midtrans.module';
 
+
 @Module({
   imports: [
     AuthModule,
@@ -14,6 +15,7 @@ import { MidtransModule } from './midtrans/midtrans.module';
     CartsModule,
     TransactionModule,
     MidtransModule,
+   
   ],
   controllers: [AppController],
   providers: [AppService],

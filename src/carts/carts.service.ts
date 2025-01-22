@@ -117,7 +117,10 @@ export class CartsService {
   }
 
   async remove(id: string) {
-    const cartItem = await this.prisma.cart.delete({
+    const deleteTransaction = await this.prisma.transaction.deleteMany({
+      where: { cartId: id },
+    });
+    const cartItem = await this.prisma.cart.deleteMany({
       where: { id },
     });
 

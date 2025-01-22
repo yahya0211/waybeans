@@ -97,8 +97,14 @@ export class AuthService {
   async check(userId: string) {
     const user = await this.prisma.user.findFirst({
       where: { id: userId },
-      include: {
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        photoProfile: true,
+        role: true,
         cart: true,
+        transaction: true,
       },
     });
     return user;

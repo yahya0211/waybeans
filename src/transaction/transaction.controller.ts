@@ -57,14 +57,14 @@ export class TransactionController {
     description: 'Product is not available',
     status: 400,
   })
-  @UseGuards(JwtAuthGuard) // @UseGuards(LocalAuthGuard)
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseGuards(JwtAuthGuard) // @UseGuards(LocalAuthGuard)
+  @UseInterceptors(FileInterceptor('attachment'))
   async create(
     @Body() createTransactionDto: CreateTransactionDto,
     @Request() req,
     @Param('cartId') cartId: string,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() attachment: Express.Multer.File,
   ) {
     const token = req.headers.authorization?.split(' ')[1];
 
@@ -77,9 +77,10 @@ export class TransactionController {
 
       const transaction = await this.transactionService.create(
         createTransactionDto,
+        attachment,
         cartId,
-        file,
       );
+
       return transaction;
     } catch (error) {
       console.log(error);

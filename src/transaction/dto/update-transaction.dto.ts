@@ -3,7 +3,11 @@ import { CreateTransactionDto } from './create-transaction.dto';
 import { TransactionStateus } from '../entities/transaction.entity';
 
 export class UpdateTransactionDto extends PartialType(CreateTransactionDto) {
-    pay?: boolean
-    status: TransactionStateus;
-    action?: boolean;
+  pay?: boolean;
+  status: TransactionStateus;
+  action?: boolean;
+}
+
+export class UploadTransactionDto extends PartialType(CreateTransactionDto) {
+  attachment?: string;
 }

@@ -15,6 +15,18 @@ export interface IProductState {
   productDetail: IProduct;
 }
 
+export interface ITransaction {
+  name: string;
+  email: string;
+  phone: string;
+  postCode: string;
+  address: string;
+  attachment: string;
+  createdAt?: Date;
+  updaetdAt?: Date;
+  deletedAt?: Date;
+}
+
 export interface IUser {
   fullName: string;
   email: string;
@@ -29,7 +41,10 @@ export interface ICart {
   productId: string;
   qty: number;
   totalPrice: number;
-  product: IProduct;
+  createdAt: Date;
+  updaetdAt?: Date;
+  deletedAt?: Date;
+  product?: IProduct;
 }
 
 enum Role {

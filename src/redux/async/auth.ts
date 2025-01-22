@@ -21,6 +21,7 @@ export interface IProfileState {
   email: string;
   fullName: string;
   photoProfile: string;
+  role: string;
 }
 
 export const loginAsync = createAsyncThunk<ILoginResponse, ILoginState, { rejectValue: string }>("auth/login", async (props, { rejectWithValue }) => {
@@ -51,7 +52,6 @@ export const findProfile = createAsyncThunk<IProfileState, void, { rejectValue: 
       },
     });
 
-    console.log("data.data:", data);
     return data;
   } catch (error) {
     setAuthToken();

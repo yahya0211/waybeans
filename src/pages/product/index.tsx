@@ -62,7 +62,7 @@ const Product = () => {
 
       dispatch(findProfile());
       dispatch(cartUser());
-      navigate("/cart");
+      navigate("/carts");
       return addCart;
     } catch (error: any) {
       console.error("Error adding to cart:", error.response?.data || error.message);

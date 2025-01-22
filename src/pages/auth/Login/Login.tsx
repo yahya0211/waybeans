@@ -15,7 +15,6 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("authState:", authState);
     const token = localStorage.getItem("token");
     if (token) {
       navigate("/");

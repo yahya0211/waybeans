@@ -6,10 +6,14 @@ import { useEffect } from "react";
 import { AddShoppingCartOutlined } from "@mui/icons-material";
 import { findProfile } from "../../redux/async/auth";
 import { LOGOUT } from "../../redux/slice/auth";
+import { cartUser } from "../../redux/async/carts";
 
 const Navbar = () => {
+  const reduxCarts = useAppSelector((state) => state.cart);
+
   const token = localStorage.getItem("token");
   const profile = useAppSelector((state: RootState) => state.auth.profile);
+  const cartLength = useAppSelector((state) => state.cart.cart.length);
   const dispatch = useAppDispatch();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const navigate = useNavigate();
@@ -29,7 +33,7 @@ const Navbar = () => {
 
   useEffect(() => {
     dispatch(findProfile());
-  }, [token]);
+  }, [dispatch, token, reduxCarts]);
 
   return (
     <AppBar
@@ -92,9 +96,10 @@ const Navbar = () => {
                 </Box>
               </Grid>
             ) : (
-              <Box display={"flex"} gap={2}>
-                <NavLink to="/carts">
+              <Box display={"flex"} gap={3}>
+                <NavLink to="/carts" style={{ textDecoration: "none", color: "#613D2B", display: "flex", alignItems: "center" }}>
                   <AddShoppingCartOutlined />
+                  <Typography sx={{ fontSize: "70%", fontWeight: "bold", color: "#613D2B" }}>{cartLength}</Typography>
                 </NavLink>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -119,6 +124,9 @@ const Navbar = () => {
                 >
                   <MenuItem onClick={handleLogout}>
                     <Typography textAlign="center">Logout</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={() => navigate("/profile")}>
+                    <Typography textAlign="center">Profile</Typography>
                   </MenuItem>
                 </Menu>
               </Box>

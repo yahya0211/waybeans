@@ -14,7 +14,7 @@ export const useLoginValidation = () => {
   };
 
   const schema = yup.object().shape({
-    email: yup.string().required(),
+    email: yup.string().email().required("Please input the email"),
     password: yup.string().required("Please input the password"),
   });
 
@@ -25,4 +25,3 @@ export const useLoginValidation = () => {
     resolver: yupResolver(schema),
   });
 };
-

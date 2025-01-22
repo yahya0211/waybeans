@@ -2,29 +2,27 @@ import { Box, Button, Typography } from "@mui/material";
 import { IProduct } from "../../redux/type/app";
 import { useEffect } from "react";
 import { useAppDispatch } from "../../redux";
-import { cartIdUser } from "../../redux/async/carts";
+import { useNavigate } from "react-router-dom";
 
 interface CartSummaryProps {
   totalOrder: number;
   product: IProduct;
-  id: string; // Tambahkan `cartId` sebagai props
+  id: string;
 }
 
 const CartSummary: React.FC<CartSummaryProps> = ({ totalOrder, product, id }) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (id) {
-      dispatch(cartIdUser(id)); 
-    }
-  }, [dispatch, id]);
+  useEffect(() => {}, [dispatch, id]);
 
   return (
-    <Box border={"1px solid #613D2B"} padding={2}>
-      <Typography>Sub total: {product.price * totalOrder}</Typography>
+    <Box padding={2} gap={2} display={"flex"} flexDirection={"column"}>
+      <Typography>Price: {product.price}</Typography>
       <Typography>Quantity: {totalOrder}</Typography>
-      <Button variant="contained" color="primary">
-        Submit Order
+      <Typography>Total: {product.price * totalOrder}</Typography>
+      <Button variant="contained" sx={{ color: "white", backgroundColor: "#613D2B", borderColor: "#613D2B", "&:hover": { backgroundColor: "#613D2B", color: "white" } }} onClick={() => navigate(`/checkout/${id}`)}>
+        Proceed to checkout
       </Button>
     </Box>
   );

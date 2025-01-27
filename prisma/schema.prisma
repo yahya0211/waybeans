@@ -23,27 +23,27 @@ model User {
   transaction  Transaction[]
   product      Product[]
   cart         Cart[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now())
-  deletedAt    DateTime      @default(now())
+  createdAt    DateTime?     @default(now())
+  updatedAt    DateTime?
+  deletedAt    DateTime?
 }
 
 model Cart {
-  id          String        @id @default(uuid())
+  id          String       @id @default(uuid())
   qty         Int
   totalPrice  Int
   userId      String
   productId   String
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product     Product       @relation(fields: [productId], references: [id])
-  transaction Transaction[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @default(now())
-  deletedAt   DateTime      @default(now())
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product     Product      @relation(fields: [productId], references: [id])
+  transaction Transaction?
+  createdAt   DateTime?    @default(now())
+  updatedAt   DateTime?
+  deletedAt   DateTime?
 }
 
 model Product {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   nameProduct  String
   stock        Int
   price        Float
@@ -51,10 +51,10 @@ model Product {
   productPhoto String?
   userId       String
   cart         Cart[]
-  user         User?    @relation(fields: [userId], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
-  deletedAt    DateTime @default(now())
+  user         User?     @relation(fields: [userId], references: [id])
+  createdAt    DateTime? @default(now())
+  updatedAt    DateTime?
+  deletedAt    DateTime?
 }
 
 model Transaction {
@@ -71,11 +71,11 @@ model Transaction {
   action       Boolean?
   userId       String
   user         User              @relation(fields: [userId], references: [id])
-  cartId       String
+  cartId       String            @unique
   cart         Cart              @relation(fields: [cartId], references: [id])
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @default(now())
-  deletedAt    DateTime          @default(now())
+  createdAt    DateTime?         @default(now())
+  updatedAt    DateTime?
+  deletedAt    DateTime?
 }
 
 enum TransactionStatus {

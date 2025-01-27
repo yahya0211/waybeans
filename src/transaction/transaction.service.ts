@@ -20,7 +20,6 @@ export class TransactionService {
     cartId: string,
   ): Promise<any> {
     try {
-
       const findCarts = await this.prisma.cart.findFirst({
         where: { id: cartId },
         include: {
@@ -35,9 +34,7 @@ export class TransactionService {
 
       let imageUrl: string = createTransactionDto.attachment || '';
       if (file) {
-
         const filePath = file as unknown as Express.Multer.File;
-        
 
         const cloudinaryUpload = await cloudinary.uploader.upload(
           filePath.path,
@@ -129,7 +126,11 @@ export class TransactionService {
   }
 
   async findAllTransaction() {
-    return this.prisma.transaction.findMany();
+    return this.prisma.transaction.findMany({
+      include: {
+        cart: true,
+      },
+    });
   }
 
   async findByUser(userId: string) {
@@ -158,6 +159,7 @@ export class TransactionService {
         pay: updateTransactionDto.pay,
         status: updateTransactionDto.status,
         action: updateTransactionDto.action,
+        updatedAt: new Date(),
       },
     });
   }

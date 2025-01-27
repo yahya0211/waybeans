@@ -109,6 +109,7 @@ export class CartsService {
         data: {
           qty: totalOrder,
           totalPrice: totalPrice,
+          updatedAt: new Date(),
         },
       });
     } catch (error) {

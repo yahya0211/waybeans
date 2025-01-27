@@ -1,0 +1,15 @@
+-- AlterTable
+ALTER TABLE "Cart" ALTER COLUMN "deletedAt" DROP DEFAULT,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Product" ALTER COLUMN "deletedAt" DROP DEFAULT,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Transaction" ALTER COLUMN "deletedAt" DROP DEFAULT,
+ALTER COLUMN "updatedAt" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "deletedAt" DROP DEFAULT,
+ALTER COLUMN "updatedAt" DROP DEFAULT;

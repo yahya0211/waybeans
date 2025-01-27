@@ -98,7 +98,6 @@ export class AuthService {
     const user = await this.prisma.user.findFirst({
       where: { id: userId },
       select: {
-        id: true,
         fullName: true,
         email: true,
         photoProfile: true,
@@ -146,6 +145,7 @@ export class AuthService {
         data: {
           fullName: updateAuthDto?.fullName,
           photoProfile: photoProfileUrl,
+          updatedAt: new Date(),
         },
       });
 

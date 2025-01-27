@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { findProfile, ILoginResponse, IProfileState } from "../async/auth";
+import { dataTransactions, findProfile, ILoginResponse, IProfileState } from "../async/auth";
 import { loginAsync } from "../async/auth";
 
 export interface IAuthState {
@@ -35,7 +35,7 @@ const authSlice = createSlice({
       state.isLogin = false;
       state.token = "";
       state.user = undefined;
-      state.profile = {} as IProfileState
+      state.profile = {} as IProfileState;
       localStorage.removeItem("token");
     },
   },

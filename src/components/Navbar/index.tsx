@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import { AddShoppingCartOutlined } from "@mui/icons-material";
 import { findProfile } from "../../redux/async/auth";
 import { LOGOUT } from "../../redux/slice/auth";
-import { cartUser } from "../../redux/async/carts";
 
 const Navbar = () => {
   const reduxCarts = useAppSelector((state) => state.cart);

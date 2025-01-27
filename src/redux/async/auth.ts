@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { API, setAuthToken } from "../../lib";
+import { ICart, ITransaction } from "../type/app";
 
 interface ILoginState {
   email: string;
@@ -22,18 +23,27 @@ export interface IProfileState {
   fullName: string;
   photoProfile: string;
   role: string;
+  cart: {
+    id: string;
+    userId: string;
+    productId: string;
+    qty: number;
+    totalPrice: number;
+    createdAt: Date;
+    updaetdAt?: Date;
+    deletedAt?: Date;
+  };
+  transaction: ITransaction[];
 }
 
 export const loginAsync = createAsyncThunk<ILoginResponse, ILoginState, { rejectValue: string }>("auth/login", async (props, { rejectWithValue }) => {
   try {
     const { data } = await API.post("auth/login", props);
-    console.log("data", data);
 
     const token = data.accessToken;
     const user = data.user;
     setAuthToken(token);
     localStorage.setItem("token", token);
-    console.log("user", user);
 
     return { token, user };
   } catch (error) {
@@ -41,7 +51,6 @@ export const loginAsync = createAsyncThunk<ILoginResponse, ILoginState, { reject
     return rejectWithValue(err);
   }
 });
-
 
 export const findProfile = createAsyncThunk<IProfileState, void, { rejectValue: string }>("auth/check", async (_, { rejectWithValue }) => {
   try {
@@ -52,10 +61,26 @@ export const findProfile = createAsyncThunk<IProfileState, void, { rejectValue: 
       },
     });
 
+
     return data;
   } catch (error) {
     setAuthToken();
     localStorage.removeItem("token");
+    return rejectWithValue("error");
+  }
+});
+
+export const dataTransactions = createAsyncThunk<IProfileState, void, { rejectValue: string }>("auth/check", async (_, { rejectWithValue }) => {
+  try {
+    setAuthToken();
+    const { data } = await API.get("auth/check", {
+      headers: {
+        Authorization: `Bearer ${setAuthToken()}`,
+      },
+    });
+
+    return data.cart;
+  } catch (error) {
     return rejectWithValue("error");
   }
 });

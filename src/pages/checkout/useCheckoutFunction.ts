@@ -18,7 +18,7 @@ export const useCheckoutFunction = ({ reset }: IProps) => {
     dispatch(checkoutAsync({ data, id: id as string }));
     reset();
     toast.success("Thank you for ordering in us, please wait 1 x 24 hours to verify you order", { position: "top-center" });
-    navigate("/profile/:id");
+    navigate("/profile/");
     return data;
   };
 

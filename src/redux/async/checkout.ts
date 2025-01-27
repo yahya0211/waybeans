@@ -4,7 +4,7 @@ import { ITransaction } from "../type/app";
 
 interface CheckoutPayload {
   id: string;
-  data: ITransaction;
+  data: ITransaction[];
 }
 
 export const checkoutAsync = createAsyncThunk<ITransaction, CheckoutPayload, { rejectValue: string }>("checkout", async ({ id, data }, { rejectWithValue }) => {

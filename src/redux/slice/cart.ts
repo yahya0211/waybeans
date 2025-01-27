@@ -19,7 +19,7 @@ const cartSlice = createSlice({
       })
       .addCase(cartUser.rejected, (state, action) => {
         state.error = action.payload || "Failed to fetch carts";
-      });
+      })
   },
 });
 

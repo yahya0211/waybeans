@@ -22,6 +22,10 @@ export interface ITransaction {
   postCode: string;
   address: string;
   attachment: string;
+  productPrice: number;
+  status: string;
+  cartId: string;
+  cart: ICart;
   createdAt?: Date;
   updaetdAt?: Date;
   deletedAt?: Date;

@@ -44,7 +44,7 @@ const router: RouteObject[] = [
         element: <PrivateRoutes element={<Checkout />} />,
       },
       {
-        path: "/profile/:id",
+        path: "/profile",
         element: <PrivateRoutes element={<Profile />} />,
       },
       {
@@ -63,5 +63,4 @@ const router: RouteObject[] = [
     element: <RegisterPage />,
   },
 ];
-
 export default router;

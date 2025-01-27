@@ -5,25 +5,19 @@ import { useCheckoutFunction } from "./useCheckoutFunction";
 import { Controller } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../redux";
 import { useEffect } from "react";
-import { cartIdUser, cartUser } from "../../redux/async/carts";
+import { cartIdUser } from "../../redux/async/carts";
 import { useParams } from "react-router-dom";
 
-interface IProps {
-  id: string;
-  nameProduct: string;
-  stock: number;
-  qty: number;
-  photoProduct: string;
-  price: string;
-  description: string;
-  totalTransaction: number;
-}
 const Checkout = () => {
   const { control, reset, handleSubmit } = useCheckoutValidation();
   const { id } = useParams();
   const { onErrorSubmit, onSubmit } = useCheckoutFunction({ reset });
   const dispatch = useAppDispatch();
   const transactionUser = useAppSelector((state) => state.detailCart.cart);
+  const dateState = transactionUser?.createdAt as Date;
+  const date = new Date(dateState);
+  const day = date.toLocaleDateString("en-GB", { weekday: "short" });
+  const dateString = date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   const seperateRupiah = `Rp.${transactionUser?.product?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
   const totalTransaction = transactionUser?.totalPrice !== undefined ? `Rp.${transactionUser.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}` : "Rp.0";
   const VisuallyHiddenInput = styled("input")({
@@ -41,8 +35,6 @@ const Checkout = () => {
   useEffect(() => {
     dispatch(cartIdUser(id as string));
   }, [dispatch]);
-
-
 
   return (
     <>
@@ -127,8 +119,13 @@ const Checkout = () => {
                       {" "}
                       {transactionUser?.product?.nameProduct}
                     </Typography>
-                    <Typography variant="subtitle1" fontWeight={"bold"}>
-                      Saturday: <span style={{ color: "#613D2B", textTransform: "none", fontWeight: "normal" }}>5 March 2020</span>{" "}
+                    <Typography variant="subtitle1">
+                      <Box component="span" fontWeight="bold">
+                        {day} {/* Hari */}
+                      </Box>{" "}
+                      <Box component="span" fontWeight="normal">
+                        {dateString} {/* Tanggal */}
+                      </Box>
                     </Typography>
                   </Box>
                   <Box>

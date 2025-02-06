@@ -23,8 +23,7 @@ const Product = () => {
     marginRight: "10px",
   };
 
-  if (mappingProduct.length === 0){
-
+  if (mappingProduct.length === 0) {
     return (
       <div
         style={{
@@ -51,7 +50,7 @@ const Product = () => {
           }}
           style={boxStyle}
         />
-  
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: [0.3, 1, 0.3] }}
@@ -76,37 +75,50 @@ const Product = () => {
   }
 
   return (
-    <Box marginTop={5} display={"flex"} gap={6}>
-      {mappingProduct.map((item) => (
-        <NavLink key={item.id} to={`/product/${item.id}`} style={{ fontStyle: "normal", textDecoration: "none" }}>
-          <Card
-            key={item.id}
-            sx={{
-              height: 450,
-              width: 211,
-              bgcolor: "#F6E6DA",
-              transition: "transform 0.2s, box-shadow 0.2s",
-              "&:hover": {
-                transform: "scale(1.05)",
-                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-              },
-            }}
-          >
-            <img src={item.productPhoto} alt={item.nameProduct} style={{ width: "100%", height: "auto" }} />
-            <CardContent>
-              <Typography gutterBottom variant="h5" color={"#613D2B"} fontWeight={"bold"}>
-                {item.nameProduct}
-              </Typography>
-              <Typography variant="body2" color={"#613D2B"}>
-                Rp.{item.price}{" "}
-              </Typography>
-              <Typography variant="body2" color={"#613D2B"}>
-                Stock: {item.stock}{" "}
-              </Typography>
-            </CardContent>
-          </Card>
-        </NavLink>
-      ))}
+    <Box marginTop={5} display={"flex"} gap={6} height={500}>
+      {mappingProduct.map((item) => {
+        // Resolve product image URL
+        let productImageSrc = "";
+
+        if (typeof item.productPhoto === "string") {
+          productImageSrc = item.productPhoto;
+        } else if (item.productPhoto instanceof File) {
+          productImageSrc = URL.createObjectURL(item.productPhoto);
+        } else {
+          productImageSrc = "/path/to/placeholder-image.jpg"; // Fallback for undefined or missing photos
+        }
+
+        return (
+          <NavLink key={item.id} to={`/product/${item.id}`} style={{ fontStyle: "normal", textDecoration: "none" }}>
+            <Card
+              key={item.id}
+              sx={{
+                height: 450,
+                width: 211,
+                bgcolor: "#F6E6DA",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                "&:hover": {
+                  transform: "scale(1.05)",
+                  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+                },
+              }}
+            >
+              <img src={productImageSrc} alt={item.nameProduct} style={{ width: "100%", height: "auto" }} />
+              <CardContent>
+                <Typography gutterBottom variant="h5" color={"#613D2B"} fontWeight={"bold"}>
+                  {item.nameProduct}
+                </Typography>
+                <Typography variant="body2" color={"#613D2B"}>
+                  Rp.{item.price}{" "}
+                </Typography>
+                <Typography variant="body2" color={"#613D2B"}>
+                  Stock: {item.stock}{" "}
+                </Typography>
+              </CardContent>
+            </Card>
+          </NavLink>
+        );
+      })}
     </Box>
   );
 };

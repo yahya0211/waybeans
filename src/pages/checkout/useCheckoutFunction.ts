@@ -24,7 +24,7 @@ export const useCheckoutFunction = ({ reset }: IProps) => {
 
   const onErrorSubmit: SubmitErrorHandler<ITransaction> = (data) => {
     console.log(data);
-    toast.error("Invalid credentials", { position: "top-center" });
+    toast.error(`${data}`, { position: "top-center" });
   };
 
   return { onSubmit, onErrorSubmit };

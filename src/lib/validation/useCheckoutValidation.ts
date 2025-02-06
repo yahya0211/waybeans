@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { ITransaction } from "../../redux/type/app";
 
 export const useCheckoutValidation = () => {
-  const initialValue: ITransaction = {
+  const initialValue: Partial<ITransaction> = {
     name: "",
     email: "",
     phone: "",
@@ -26,6 +26,6 @@ export const useCheckoutValidation = () => {
     defaultValues: initialValue,
     mode: "all",
     reValidateMode: "onBlur",
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema) as any,
   });
 };

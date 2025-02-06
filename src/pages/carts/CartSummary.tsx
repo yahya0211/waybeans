@@ -12,6 +12,7 @@ interface CartSummaryProps {
 
 const CartSummary: React.FC<CartSummaryProps> = ({ totalOrder, product, id }) => {
   const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
 
   useEffect(() => {}, [dispatch, id]);

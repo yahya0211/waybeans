@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { checkoutAsync } from "../async/checkout";
+import { checkoutAsync, getTransaction, updateTransactions } from "../async/checkout";
 import { ITransaction } from "../type/app";
 
-const initialState: { transaction: ITransaction } = {
+const initialState = {
   transaction: {} as ITransaction,
+  transactions: [] as ITransaction[],
 };
 
 const checkoutSlice = createSlice({
@@ -12,7 +13,7 @@ const checkoutSlice = createSlice({
   reducers: {
     addTransaction: (state, action) => {
       state.transaction = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -20,10 +21,32 @@ const checkoutSlice = createSlice({
         state.transaction = action.payload;
       })
       .addCase(checkoutAsync.rejected, (_, action) => {
-        console.log("rejected:", action);
+        console.error("Failed to checkout:", action.error);
       })
-      .addCase(checkoutAsync.pending, (_, action) => {
-        console.log("pending", action);
+      .addCase(checkoutAsync.pending, () => {
+        console.log("Checkout in progress...");
+      })
+      .addCase(getTransaction.pending, () => {
+        console.log("Fetching transactions...");
+      })
+      .addCase(getTransaction.fulfilled, (state, action) => {
+        state.transactions = action.payload;
+      })
+      .addCase(getTransaction.rejected, (_, action) => {
+        console.error("Failed to fetch transactions:", action.error);
+      })
+      .addCase(updateTransactions.pending, () => {
+        console.log("Updating transaction...");
+      })
+      .addCase(updateTransactions.fulfilled, (state, action) => {
+        const updatedTransaction = action.payload;
+        state.transactions = state.transactions.map((transaction) =>
+          transaction.id === updatedTransaction.id ? updatedTransaction : transaction
+        );
+        console.log("Transaction updated successfully.");
+      })
+      .addCase(updateTransactions.rejected, (_, action) => {
+        console.error("Failed to update transaction:", action.error);
       });
   },
 });

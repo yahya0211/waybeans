@@ -4,7 +4,7 @@ import { useCheckoutValidation } from "../../lib/validation/useCheckoutValidatio
 import { useCheckoutFunction } from "./useCheckoutFunction";
 import { Controller } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { cartIdUser } from "../../redux/async/carts";
 import { useParams } from "react-router-dom";
 
@@ -14,6 +14,9 @@ const Checkout = () => {
   const { onErrorSubmit, onSubmit } = useCheckoutFunction({ reset });
   const dispatch = useAppDispatch();
   const transactionUser = useAppSelector((state) => state.detailCart.cart);
+
+  const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
+
   const dateState = transactionUser?.createdAt as Date;
   const date = new Date(dateState);
   const day = date.toLocaleDateString("en-GB", { weekday: "short" });
@@ -87,18 +90,30 @@ const Checkout = () => {
                 control={control}
                 name="attachment"
                 render={({ field }) => (
-                  <Button
-                    component="label"
-                    role={undefined}
-                    variant="contained"
-                    tabIndex={-1}
-                    {...field}
-                    sx={{ justifyContent: "start", backgroundColor: "#613D2B40", borderColor: "#613D2B", color: "#613D2B", "&:hover": { backgroundColor: "#613D2B40" } }}
-                    endIcon={<IoMdAttach />}
-                  >
-                    Attach of Transaction
-                    <VisuallyHiddenInput type="file" onChange={(event) => console.log(event.target.files)} multiple />
-                  </Button>
+                  <>
+                    <Button
+                      component="label"
+                      role={undefined}
+                      variant="contained"
+                      tabIndex={-1}
+                      sx={{ justifyContent: "start", backgroundColor: "#613D2B40", borderColor: "#613D2B", color: "#613D2B", "&:hover": { backgroundColor: "#613D2B40" } }}
+                      endIcon={<IoMdAttach />}
+                    >
+                      Attach of Transaction
+                      <VisuallyHiddenInput
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          if (file) {
+                            setImageSrc(URL.createObjectURL(file));
+                            field.onChange(file);
+                          }
+                        }}
+                      />
+                    </Button>
+                    {imageSrc && <img src={imageSrc} alt="Preview" style={{ maxWidth: "100%", marginTop: "10px" }} />}
+                  </>
                 )}
               />
             </Box>
@@ -111,7 +126,7 @@ const Checkout = () => {
                 sx={{ width: "100%", borderRadius: 2, marginTop: 5, backgroundColor: "#F6E6DA", borderColor: "#F6E6DA", color: "#613D2B", "& .MuiOutlinedInput-root": { color: "#613D2B" } }}
               >
                 <Box display={"flex"} sx={{ gap: 2, width: "20%" }} padding={2}>
-                  <img src={transactionUser?.product?.productPhoto} style={{ width: "100%", height: "100%" }} alt="" />
+                  <img src={typeof transactionUser?.product?.productPhoto === "string" ? transactionUser.product.productPhoto : ""} alt="Preview" style={{ maxWidth: "100%", marginTop: "10px" }} />
                 </Box>
                 <Box justifyContent={"start"} padding={1} display={"flex"} flexDirection={"column"} sx={{ gap: 2 }}>
                   <Box>

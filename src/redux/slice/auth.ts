@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { dataTransactions, findProfile, ILoginResponse, IProfileState } from "../async/auth";
+import {  findProfile, ILoginResponse, IProfileState } from "../async/auth";
 import { loginAsync } from "../async/auth";
 
 export interface IAuthState {

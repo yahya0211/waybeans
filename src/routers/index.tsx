@@ -9,6 +9,8 @@ import Checkout from "../pages/checkout/Checkout";
 
 import NotAuthenticated from "../pages/auth/NotAuthenticated/NotAuthenticated";
 import Profile from "../pages/profile/Profile";
+import Income from "../pages/income/Income";
+import AddProducts from "../pages/product/AddProducts";
 
 interface PrivateRoutesProops {
   element: JSX.Element;
@@ -48,8 +50,16 @@ const router: RouteObject[] = [
         element: <PrivateRoutes element={<Profile />} />,
       },
       {
+        path: "/income",
+        element: <PrivateRoutes element={<Income />} />,
+      },
+      {
         path: "/product/:id",
         element: <Product />,
+      },
+      {
+        path: "/add-product",
+        element: <PrivateRoutes element={<AddProducts />} />,
       },
     ],
   },

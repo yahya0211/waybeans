@@ -14,9 +14,9 @@ const LandingPage = () => {
 
   return (
     <Fragment>
-      <Box margin={10} marginTop={5}>
+      <Box marginX={14}>
         <Box>
-          <img src="/src/imagesSource/Jumbotron.png" alt="" width={"1048px"} height={"402px"} />
+          <img src="/src/imagesSource/Jumbotron.png" alt="jumbotron" width={"100%"} />
         </Box>
         <Product />
       </Box>

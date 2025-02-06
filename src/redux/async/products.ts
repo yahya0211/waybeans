@@ -21,3 +21,18 @@ export const fetchProductId = createAsyncThunk<IProduct, string, { rejectValue: 
     return rejectWithValue(error.message || "Failed to fetch products");
   }
 });
+
+export const addProducts = createAsyncThunk<IProduct, FormData, { rejectValue: string }>("addProduct", async (formData, { rejectWithValue }) => {
+  try {
+    const response = await API.post("/product/addProducts", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.message || "Failed to add products");
+  }
+});

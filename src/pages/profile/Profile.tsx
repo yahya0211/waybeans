@@ -2,20 +2,33 @@ import { Box, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../redux";
 import { useEffect } from "react";
 import { cartUser } from "../../redux/async/carts";
+import { fetchProduct } from "../../redux/async/products";
 
 const Profile = () => {
-  const profile = useAppSelector((state) => state.auth.profile);
-  const cartItems = useAppSelector((state) => state.cart);
-  console.log("cartItems:", cartItems);
-
   const dispatch = useAppDispatch();
+  const profile = useAppSelector((state) => state.auth.profile);
+  const cartUsers = useAppSelector((state) => state.cart.cart);
+
   const transactionUser = useAppSelector((state) => state.auth.profile.transaction);
-  console.log("transaction user:", transactionUser?.map((transaction) => transaction?.cartId));
+
+  const product = useAppSelector((state) => state.product.product);
 
   const transactionDates =
     transactionUser?.map((transaction) => {
       if (!transaction?.createdAt) {
-        return "Invalid Date"; // Tanggal tidak tersedia
+        return "Invalid Date";
+      }
+
+      const date = new Date(transaction.createdAt);
+      return date.toLocaleDateString("en-GB", {
+        weekday: "short",
+      });
+    }) ?? [];
+
+  const dateTransaction =
+    transactionUser?.map((transaction) => {
+      if (!transaction?.createdAt) {
+        return "Invalid Date";
       }
 
       const date = new Date(transaction.createdAt);
@@ -26,11 +39,9 @@ const Profile = () => {
       });
     }) ?? [];
 
-  // `Rp.${transactionUser?.product?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
-  // transactionUser?.totalPrice !== undefined ? `Rp.${transactionUser.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}` : "Rp.0";
-  const totalTransaction = "hello";
   useEffect(() => {
     dispatch(cartUser());
+    dispatch(fetchProduct());
   }, [dispatch]);
 
   return (
@@ -54,66 +65,78 @@ const Profile = () => {
             </Box>
           </Box>
         </Box>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           <Typography variant="h4" fontWeight={"bold"} color={"#613D2B"}>
             My Transaction
           </Typography>
-          {transactionUser?.map((transaction, index) => (
-            <Box
-              key={index}
-              display={"flex"}
-              justifyContent={"space-between"}
-              sx={{ width: "100%", borderRadius: 2, marginTop: 2, backgroundColor: "#F6E6DA", borderColor: "#F6E6DA", color: "#613D2B", "& .MuiOutlinedInput-root": { color: "#613D2B" } }}
-            >
-              <Box display={"flex"} sx={{ gap: 2, width: "20%" }} padding={2}>
-                <img src={cartItems.cart.find((item) => item.id === transaction?.cartId)?.product?.productPhoto} style={{ width: "100%", height: "100%" }} alt="" />
-              </Box>
-              <Box justifyContent={"start"} padding={1} display={"flex"} flexDirection={"column"} sx={{ gap: 2 }}>
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={"bold"}>
-                    {" "}
-                   {cartItems.cart.find((item)=> item.id === transaction?.cartId)?.product?.nameProduct}
-                  </Typography>
-                  <Typography variant="subtitle1">
-                    <Box component="span" fontWeight="bold">
-                      {cartItems.cart.find((item) => item.id === transaction?.cartId)?.product?.price}
-                    </Box>{" "}
-                    <Box component="span" fontWeight="normal">
-                      "Hello" {/* Tanggal */}
-                    </Box>
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={"bold"}>
-                    {" "}
-                    Price: <span style={{ color: "#613D2B", textTransform: "none", fontWeight: "normal" }}>Rp.{transaction?.productPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>
-                  </Typography>
-                  <Typography variant="subtitle1" fontWeight={"bold"}>
-                    {" "}
-                    Qty: <span style={{ color: "#613D2B", textTransform: "none", fontWeight: "normal" }}>{cartItems.cart.find((item) => item.id === transaction?.cartId)?.qty}</span>
-                  </Typography>
-                  <Typography variant="subtitle1" fontWeight={"bold"}>
-                    {" "}
-                    Subtotal: <span style={{ color: "#613D2B", textTransform: "none", fontWeight: "normal" }}>Rp.{cartItems.cart.find((item) => item.id === transaction?.cartId)?.totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>
-                  </Typography>
-                </Box>
-              </Box>
-              <Box padding={1} display={"flex"} flexDirection={"column"} justifyContent={"space-between"}>
-                <img src="/Icon.png" alt="icon" />
-                <Typography
-                  color={transaction.status === "WAITING_APPROVE" ? "#613D2B" : transaction.status === "CANCELLED" ? "red" : transaction.status === "RETURNED" ? "red" : transaction.status === "DELIVERED" ? "green" : "blue"}
-                  padding={1}
-                  sx={{
-                    fontWeight: "bold",
-                    backgroundColor:
-                      transaction.status === "WAITING_APPROVE" ? "#E0C4B3" : transaction.status === "CANCELLED" ? "#FADBD8" : transaction.status === "RETURNED" ? "#FADBD8" : transaction.status === "DELIVERED" ? "#D5F5E3" : "#AED6F1",
-                  }}
+          <Box sx={{ overflowY: "scroll", display: "flex", flexDirection: "column", gap: 2, maxHeight: "50vh", paddingY: 2, paddingRight: 2 }}>
+            {transactionUser?.map((transaction, index) => {
+              const cartItem = Array.isArray(cartUsers) ? cartUsers.find((cart) => cart.id === transaction.cartId) : null;
+              return (
+                <Box
+                  key={index}
+                  display={"flex"}
+                  justifyContent={"space-between"}
+                  sx={{ width: "100%", borderRadius: 2, marginTop: 2, backgroundColor: "#F6E6DA", borderColor: "#F6E6DA", color: "#613D2B", "& .MuiOutlinedInput-root": { color: "#613D2B" } }}
                 >
-                  {transaction.status}
-                </Typography>
-              </Box>
-            </Box>
-          ))}
+                  <Box display={"flex"} sx={{ gap: 2, width: "20%" }} padding={2}>
+                    {product?.map((product) => {
+                      if (product.id === transaction?.productId) {
+                        const imageUrl = typeof product.productPhoto === "string" ? product.productPhoto : undefined;
+                        return <img key={product.id} src={imageUrl} style={{ width: "100%", height: "100%" }} alt="" />;
+                      }
+                    })}
+                  </Box>
+                  <Box justifyContent={"start"} padding={1} display={"flex"} flexDirection={"column"} sx={{ gap: 2 }}>
+                    <Box>
+                      {product?.map((product) => {
+                        if (product.id === transaction?.productId) {
+                          return (
+                            <Typography key={product.id} variant="subtitle1" fontWeight={"bold"}>
+                              {product.nameProduct}
+                            </Typography>
+                          );
+                        }
+                      })}
+                      <Typography variant="subtitle1">
+                        <Box component="span" fontWeight="bold">
+                          {transactionDates[index]}
+                        </Box>{" "}
+                        <Box component="span" fontWeight="normal">
+                          {dateTransaction[index]}
+                        </Box>
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight={"bold"}>
+                        Price: <span style={{ color: "#613D2B", textTransform: "none", fontWeight: "normal" }}>Rp.{transaction?.productPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>
+                      </Typography>
+                      <Typography variant="subtitle1" fontWeight={"bold"}>
+                        Qty: <span style={{ color: "#613D2B", textTransform: "none", fontWeight: "normal" }}>{cartItem?.qty ?? "N/A"}</span>
+                      </Typography>
+                      <Typography variant="subtitle1" fontWeight={"bold"}>
+                        Subtotal: <span style={{ color: "#613D2B", textTransform: "none", fontWeight: "normal" }}>{cartItem?.totalPrice?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ".") ?? "N/A"}</span>
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box padding={1} display={"flex"} flexDirection={"column"} justifyContent={"space-between"}>
+                    <img src="/Icon.png" alt="icon" />
+                    <Typography
+                      color={transaction.status === "WAITING_APPROVE" ? "#613D2B" : transaction.status === "CANCELLED" ? "red" : transaction.status === "RETURNED" ? "red" : transaction.status === "DELIVERED" ? "green" : "blue"}
+                      padding={1}
+                      sx={{
+                        fontWeight: "bold",
+                        backgroundColor:
+                          transaction.status === "WAITING_APPROVE" ? "#E0C4B3" : transaction.status === "CANCELLED" ? "#FADBD8" : transaction.status === "RETURNED" ? "#FADBD8" : transaction.status === "DELIVERED" ? "#D5F5E3" : "#AED6F1",
+                      }}
+                    >
+                      {transaction.status}
+                    </Typography>
+                  </Box>
+                </Box>
+              );
+            })}
+          </Box>
         </Box>
       </Box>
     </>

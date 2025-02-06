@@ -1,11 +1,12 @@
 import { Box, Typography, TextField, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import { Controller } from "react-hook-form";
+import { Controller, SubmitHandler } from "react-hook-form";
 import { useAppSelector } from "../../../redux";
-import { useLoginValidation } from "../../../lib/validation/useLoginValidation";
+import { ILoginForm, useLoginValidation } from "../../../lib/validation/useLoginValidation";
 import { useLoginFunction } from "./useLoginFunction";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const authState = useAppSelector((state) => state.auth);
@@ -13,10 +14,20 @@ const LoginPage = () => {
   const { control, reset, handleSubmit } = useLoginValidation();
   const { onErrorSubmit, onSubmit } = useLoginFunction({ reset });
   const navigate = useNavigate();
+  const handleSubmitForm: SubmitHandler<ILoginForm> = (data) => {
+    const normalizedData = {
+      ...data,
+      email: data.email ?? "",
+      password: data.password ?? "",
+    };
+
+    onSubmit(normalizedData);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
+      toast.success("Login Success", { position: "top-center" });
       navigate("/");
     }
   }, [authState]);
@@ -25,6 +36,7 @@ const LoginPage = () => {
     <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#F6E6DA">
       <Box
         component="form"
+        onSubmit={handleSubmit(handleSubmitForm, onErrorSubmit)}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -106,8 +118,8 @@ const LoginPage = () => {
         />
 
         <Button
-          onClick={handleSubmit(onSubmit, onErrorSubmit)}
           variant="contained"
+          type="submit"
           sx={{
             backgroundColor: "#613D2B",
             color: "#ffffff",

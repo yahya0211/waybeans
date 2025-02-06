@@ -1,11 +1,12 @@
 export interface IProduct {
-  id: string;
+  id?: string;
   nameProduct: string;
   stock: number;
   price: number;
-  qty: number;
+  qty?: number;
   description: string;
-  productPhoto: string;
+  productPhoto?: File | string | null;
+  file?: File;
 }
 
 export interface IProductState {
@@ -16,6 +17,7 @@ export interface IProductState {
 }
 
 export interface ITransaction {
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -29,6 +31,8 @@ export interface ITransaction {
   createdAt?: Date;
   updaetdAt?: Date;
   deletedAt?: Date;
+  productId: string;
+  product: IProduct;
 }
 
 export interface IUser {

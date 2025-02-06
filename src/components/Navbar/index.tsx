@@ -1,34 +1,18 @@
-import { AppBar, Box, Container, Grid, Toolbar, Typography, Tooltip, IconButton, Avatar, Menu, MenuItem } from "@mui/material";
-import { NavLink, useNavigate } from "react-router-dom";
+import { AppBar, Box, Container, Grid, Toolbar } from "@mui/material";
+import { NavLink } from "react-router-dom";
 import { RootState, useAppDispatch, useAppSelector } from "../../redux";
-import * as React from "react";
 import { useEffect } from "react";
-import { AddShoppingCartOutlined } from "@mui/icons-material";
 import { findProfile } from "../../redux/async/auth";
-import { LOGOUT } from "../../redux/slice/auth";
+import BuyerNavbar from "./BuyerNavbar";
+import SellerNavbar from "./SellerNavbar";
 
 const Navbar = () => {
   const reduxCarts = useAppSelector((state) => state.cart);
 
   const token = localStorage.getItem("token");
   const profile = useAppSelector((state: RootState) => state.auth.profile);
-  const cartLength = useAppSelector((state) => state.cart.cart.length);
+
   const dispatch = useAppDispatch();
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const navigate = useNavigate();
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleLogout = () => {
-    dispatch(LOGOUT());
-    navigate("/");
-    location.reload();
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
 
   useEffect(() => {
     dispatch(findProfile());
@@ -40,6 +24,7 @@ const Navbar = () => {
       sx={{
         bgcolor: "transparent",
         padding: 2,
+        marginBottom: 3,
       }}
     >
       <Container maxWidth="xl">
@@ -95,40 +80,10 @@ const Navbar = () => {
                 </Box>
               </Grid>
             ) : (
-              <Box display={"flex"} gap={3}>
-                <NavLink to="/carts" style={{ textDecoration: "none", color: "#613D2B", display: "flex", alignItems: "center" }}>
-                  <AddShoppingCartOutlined />
-                  <Typography sx={{ fontSize: "70%", fontWeight: "bold", color: "#613D2B" }}>{cartLength}</Typography>
-                </NavLink>
-                <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Remy Sharp" src={profile.photoProfile} />
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  sx={{ mt: "45px" }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
-                >
-                  <MenuItem onClick={handleLogout}>
-                    <Typography textAlign="center">Logout</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={() => navigate("/profile")}>
-                    <Typography textAlign="center">Profile</Typography>
-                  </MenuItem>
-                </Menu>
-              </Box>
+              <>
+                {profile?.role === "BUYER" && <BuyerNavbar />}
+                {profile?.role === "SELLER" && <SellerNavbar />}
+              </>
             )}
           </Grid>
         </Toolbar>

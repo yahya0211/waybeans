@@ -3,11 +3,16 @@ import { Link } from "react-router-dom";
 import { Controller } from "react-hook-form";
 import { useRegisterValidate } from "../../../lib/validation/useRegistervalidation";
 import { UseRegister } from "./useRegisterFunction";
+import { useEffect } from "react";
 
 const RegisterPage = () => {
-  const { control, reset, handleSubmit } = useRegisterValidate();
+  const { control, reset, handleSubmit, setValue } = useRegisterValidate();
   const { onSubmit, onErrorSubmit } = UseRegister({ reset });
 
+  useEffect(() => {
+    setValue("role", "BUYER");
+  }, [setValue]);
+  
   return (
     <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgcolor="#F6E6DA">
       <Box

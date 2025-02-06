@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { API, setAuthToken } from "../../lib";
-import { ICart, ITransaction } from "../type/app";
+import { ITransaction } from "../type/app";
+import { toast } from "react-toastify";
 
 interface ILoginState {
   email: string;
@@ -48,6 +49,7 @@ export const loginAsync = createAsyncThunk<ILoginResponse, ILoginState, { reject
     return { token, user };
   } catch (error) {
     const err = error as string;
+    toast.error("Invalid Credentials", { autoClose: 3000, theme: "colored", position: "top-center" });
     return rejectWithValue(err);
   }
 });
@@ -60,7 +62,6 @@ export const findProfile = createAsyncThunk<IProfileState, void, { rejectValue: 
         Authorization: `Bearer ${token}`,
       },
     });
-
 
     return data;
   } catch (error) {

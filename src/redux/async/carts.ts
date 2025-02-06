@@ -37,7 +37,6 @@ export const cartIdUser = createAsyncThunk<ICart, string, { rejectValue: string 
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(data);
     return data;
   } catch (error: any) {
     console.error("Error fetching cart by ID:", error.response?.data || error.message);

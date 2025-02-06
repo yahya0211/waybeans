@@ -10,8 +10,9 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as fs from 'fs';
-import { User } from './entities/auth.entity';
+import { Role, User } from './entities/auth.entity';
 import cloudinary from 'src/config/cloudinary';
+import { Roles } from './decorators/roles.decorators';
 
 @Injectable()
 export class AuthService {
@@ -33,6 +34,18 @@ export class AuthService {
       throw new Error('User already registered');
     }
 
+    if (createAuthDto.role === Role.SELLER) {
+      const existingAdmin = await this.prisma.user.count({
+        where: {
+          role: Role.SELLER,
+        },
+      });
+
+      if (existingAdmin > 0) {
+        throw new Error('Admin already registered');
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(createAuthDto.password, 10);
 
     return this.prisma.user.create({
@@ -40,7 +53,7 @@ export class AuthService {
         fullName: createAuthDto.fullName,
         email: createAuthDto.email,
         password: hashedPassword,
-        role: 'BUYER',
+        role: createAuthDto.role,
         photoProfile:
           'https://res.cloudinary.com/dnsytfebt/image/upload/v1719969795/profiles/xwi2oc2abjjrm2g0stqh.jpg',
       },
@@ -98,6 +111,7 @@ export class AuthService {
     const user = await this.prisma.user.findFirst({
       where: { id: userId },
       select: {
+        id: true,
         fullName: true,
         email: true,
         photoProfile: true,

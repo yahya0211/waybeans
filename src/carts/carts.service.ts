@@ -30,9 +30,6 @@ export class CartsService {
         },
       });
 
-      if (existingCart) {
-        throw new BadRequestException('Product is already in your cart');
-      }
 
       const cartItem = await this.prisma.cart.create({
         data: {
@@ -55,6 +52,9 @@ export class CartsService {
         where: { userId },
         include: {
           product: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
         },
       });
     } catch (error) {
@@ -118,9 +118,6 @@ export class CartsService {
   }
 
   async remove(id: string) {
-    const deleteTransaction = await this.prisma.transaction.deleteMany({
-      where: { cartId: id },
-    });
     const cartItem = await this.prisma.cart.deleteMany({
       where: { id },
     });

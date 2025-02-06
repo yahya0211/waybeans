@@ -54,16 +54,14 @@ export class TransactionService {
           phone: createTransactionDto.phone,
           postCode: createTransactionDto.postCode,
           address: createTransactionDto.address,
-          attachment: imageUrl,
+          attachment: imageUrl || null,
           pay: false,
-          productPrice: findCarts.product.price,
+          productPrice: findCarts?.product?.price || 0,
           status: TransactionStateus.WAITING_APPROVE,
-          user: {
-            connect: { id: findCarts.user.id },
-          },
-          cart: {
-            connect: { id: findCarts.id },
-          },
+          createdAt: new Date(),
+          productId: findCarts?.product?.id,
+          userId: findCarts?.user?.id,
+          cartId: findCarts?.id,
         },
       });
 
@@ -118,27 +116,37 @@ export class TransactionService {
         },
       });
 
-      return payment;
+      return { payment, findCarts };
     } catch (error) {
-      console.log('error on service', error);
       throw error;
     }
   }
 
   async findAllTransaction() {
-    return this.prisma.transaction.findMany({
+    return await this.prisma.transaction.findMany({
       include: {
-        cart: true,
+        product: true,
       },
+      orderBy:{
+        createdAt: 'desc',
+      }
+    });
+  }
+
+  async findTransactionBuyer(){
+    return await this.prisma.transaction.findMany({
+      include: {
+        product: true,
+      },
+      orderBy:{
+        createdAt: 'desc',
+      }
     });
   }
 
   async findByUser(userId: string) {
     const findUser = this.prisma.transaction.findMany({
       where: { userId },
-      include: {
-        cart: true,
-      },
     });
 
     if (!findUser) {

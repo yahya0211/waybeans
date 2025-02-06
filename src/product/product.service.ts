@@ -18,7 +18,6 @@ export class ProductService {
     try {
       let imageUrl: string = dto.productPhoto || '';
 
-      console.log('file', file);
 
       if (file) {
         const filePath = file as unknown as Express.Multer.File;

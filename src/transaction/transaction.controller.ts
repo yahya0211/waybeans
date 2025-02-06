@@ -17,7 +17,6 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import {
   ApiBadRequestResponse,
-  ApiBasicAuth,
   ApiBearerAuth,
   ApiConsumes,
   ApiCreatedResponse,
@@ -88,9 +87,19 @@ export class TransactionController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @Roles(Role.SELLER)
   @Get()
   async findAllTransaction() {
     return this.transactionService.findAllTransaction();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @Get('buyer')
+  async findAllTransactionBuyer() {
+    return this.transactionService.findTransactionBuyer();
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -43,7 +43,7 @@ model Cart {
 }
 
 model Product {
-  id           String    @id @default(uuid())
+  id           String        @id @default(uuid())
   nameProduct  String
   stock        Int
   price        Float
@@ -51,8 +51,9 @@ model Product {
   productPhoto String?
   userId       String
   cart         Cart[]
-  user         User?     @relation(fields: [userId], references: [id])
-  createdAt    DateTime? @default(now())
+  user         User?         @relation(fields: [userId], references: [id])
+  transaction  Transaction[]
+  createdAt    DateTime?     @default(now())
   updatedAt    DateTime?
   deletedAt    DateTime?
 }
@@ -67,15 +68,18 @@ model Transaction {
   attachment   String?
   pay          Boolean?
   productPrice Int
-  status       TransactionStatus
-  action       Boolean?
-  userId       String
-  user         User              @relation(fields: [userId], references: [id])
   cartId       String            @unique
   cart         Cart              @relation(fields: [cartId], references: [id])
-  createdAt    DateTime?         @default(now())
-  updatedAt    DateTime?
-  deletedAt    DateTime?
+  status       TransactionStatus
+  action       Boolean?
+  productId    String
+  product      Product           @relation(fields: [productId], references: [id])
+  userId       String
+  user         User              @relation(fields: [userId], references: [id])
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime?
+  deletedAt DateTime?
 }
 
 enum TransactionStatus {

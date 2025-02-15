@@ -1,13 +1,17 @@
 import { Box, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { cartUser } from "../../redux/async/carts";
 import { fetchProduct } from "../../redux/async/products";
+import * as motion from "motion/react-client";
+import { boxStyle } from "../landingPage/products/Product";
 
 const Profile = () => {
   const dispatch = useAppDispatch();
   const profile = useAppSelector((state) => state.auth.profile);
   const cartUsers = useAppSelector((state) => state.cart.cart);
+  const loadingProfile = useAppSelector((state) => state.cart.loading);
+  const [isLoading, setIsLoading] = useState(true);
 
   const transactionUser = useAppSelector((state) => state.auth.profile.transaction);
 
@@ -40,9 +44,61 @@ const Profile = () => {
     }) ?? [];
 
   useEffect(() => {
+    setIsLoading(false);
     dispatch(cartUser());
     dispatch(fetchProduct());
   }, [dispatch]);
+
+  if (isLoading && loadingProfile === true) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "30vh",
+          flexDirection: "column",
+          gap: "10px",
+        }}
+      >
+        <motion.div
+          animate={{
+            scale: [1, 1.5, 1.5, 1, 1],
+            rotate: [0, 0, 270, 270, 0],
+            borderRadius: ["20%", "50%", "50%", "20%", "20%"],
+          }}
+          transition={{
+            duration: 1.5,
+            ease: "easeInOut",
+            times: [0, 0.25, 0.5, 0.75, 1],
+            repeat: Infinity,
+            repeatDelay: 0.5,
+          }}
+          style={boxStyle}
+        />
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0.3, 1, 0.3] }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+          }}
+        >
+          <Typography
+            variant="h6"
+            style={{
+              color: "#613D2B",
+              fontWeight: "bold",
+              letterSpacing: "1px",
+            }}
+          >
+            Now Loading...
+          </Typography>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <>

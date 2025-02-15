@@ -1,27 +1,46 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { useAppSelector, RootState, useAppDispatch } from "../../../redux";
 import { useEffect } from "react";
-import { fetchProduct } from "../../../redux/async/products";
+import { deleteProducts, fetchProduct } from "../../../redux/async/products";
 import { NavLink } from "react-router-dom";
 import * as motion from "motion/react-client";
+import Swal from "sweetalert2";
 
+export const boxStyle = {
+  width: "50px",
+  height: "50px",
+  background: "linear-gradient(135deg, #f2709c, #ff9472)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  marginRight: "10px",
+};
 const Product = () => {
   const mappingProduct = useAppSelector((state: RootState) => state.product.product);
   const dispatch = useAppDispatch();
+  const profileUser = useAppSelector((state) => state.auth.profile);
+
+  const handleDeleteProduct = (id: any) => {
+    Swal.fire({
+      title: "Are you sure want to delete this product?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(deleteProducts(id));
+        dispatch(fetchProduct());
+        Swal.fire("Deleted!", "Your product has been deleted.", "success");
+      }
+    })
+    // dispatch(deleteProducts(id));
+  };
 
   useEffect(() => {
     dispatch(fetchProduct());
   }, []);
-
-  const boxStyle = {
-    width: "50px",
-    height: "50px",
-    background: "linear-gradient(135deg, #f2709c, #ff9472)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: "10px",
-  };
 
   if (mappingProduct.length === 0) {
     return (
@@ -75,9 +94,8 @@ const Product = () => {
   }
 
   return (
-    <Box marginTop={5} display={"flex"} gap={6} height={500}>
+    <Box marginY={5} display={"flex"} gap={6}>
       {mappingProduct.map((item) => {
-        // Resolve product image URL
         let productImageSrc = "";
 
         if (typeof item.productPhoto === "string") {
@@ -89,13 +107,10 @@ const Product = () => {
         }
 
         return (
-          <NavLink key={item.id} to={`/product/${item.id}`} style={{ fontStyle: "normal", textDecoration: "none" }}>
-            <Card
-              key={item.id}
+          <>
+            <Box
+              display={"flex flex-reverse"}
               sx={{
-                height: 450,
-                width: 211,
-                bgcolor: "#F6E6DA",
                 transition: "transform 0.2s, box-shadow 0.2s",
                 "&:hover": {
                   transform: "scale(1.05)",
@@ -103,20 +118,43 @@ const Product = () => {
                 },
               }}
             >
-              <img src={productImageSrc} alt={item.nameProduct} style={{ width: "100%", height: "auto" }} />
-              <CardContent>
-                <Typography gutterBottom variant="h5" color={"#613D2B"} fontWeight={"bold"}>
-                  {item.nameProduct}
-                </Typography>
-                <Typography variant="body2" color={"#613D2B"}>
-                  Rp.{item.price}{" "}
-                </Typography>
-                <Typography variant="body2" color={"#613D2B"}>
-                  Stock: {item.stock}{" "}
-                </Typography>
-              </CardContent>
-            </Card>
-          </NavLink>
+              {profileUser.role === "SELLER" && (
+                <Box
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteProduct(item.id);
+                  }}
+                  sx={{ position: "absolute", zIndex: 50, borderRadius: "50%", backgroundColor: "gray", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+                >
+                  X
+                </Box>
+              )}
+              <NavLink key={item.id} to={`/product/${item.id}`} style={{ fontStyle: "normal", textDecoration: "none" }}>
+                <Card
+                  key={item.id}
+                  sx={{
+                    height: 450,
+                    width: 211,
+                    bgcolor: "#F6E6DA",
+                    transition: "transform 0.2s, box-shadow 0.2s",
+                  }}
+                >
+                  <img src={productImageSrc} alt={item.nameProduct} style={{ width: "100%", height: "auto" }} />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" color={"#613D2B"} fontWeight={"bold"}>
+                      {item.nameProduct}
+                    </Typography>
+                    <Typography variant="body2" color={"#613D2B"}>
+                      Rp.{item.price}{" "}
+                    </Typography>
+                    <Typography variant="body2" color={"#613D2B"}>
+                      Stock: {item.stock}{" "}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </NavLink>
+            </Box>
+          </>
         );
       })}
     </Box>

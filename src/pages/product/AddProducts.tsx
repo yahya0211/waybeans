@@ -5,12 +5,15 @@ import { Close as CloseIcon } from "@mui/icons-material";
 import { useProductsFunction } from "./useProductsFunction";
 import { Controller } from "react-hook-form";
 import { useProductValidation } from "../../lib/validation/useProductValidation";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AddProducts = () => {
   const { control, reset, handleSubmit } = useProductValidation();
   const [image, setImage] = useState<{ file: File; preview: string } | null>(null);
   const { onSubmit, onErrorSubmit } = useProductsFunction({ reset, imageFile: image?.file || null });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -43,16 +46,17 @@ const AddProducts = () => {
         body: formData,
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-        }
+        },
       });
 
       if (response.ok) {
-        alert("Product added successfully!");
+        toast.success("Product added successfully", { position: "top-center" });
+        navigate("/");
         reset();
         setImage(null);
       } else {
         const error = await response.json();
-        alert(`Error: ${error.message}`);
+        toast.error(error.message, { position: "top-center" });
       }
     } catch (error) {
       console.error("Submission error:", error);
@@ -71,63 +75,26 @@ const AddProducts = () => {
             <Controller
               name="nameProduct"
               control={control}
-              render={({ field }) => (
-                <TextField
-                  id="nameProduct-field"
-                  sx={{ backgroundColor: "#613D2B40", "& .MuiOutlinedInput-root": { color: "#613D2B" } }}
-                  label="Name"
-                  variant="outlined"
-                  type="text"
-                  {...field}
-                />
-              )}
+              render={({ field }) => <TextField id="nameProduct-field" sx={{ backgroundColor: "#613D2B40", "& .MuiOutlinedInput-root": { color: "#613D2B" } }} label="Name" variant="outlined" type="text" {...field} />}
             />
 
             <Controller
               name="stock"
               control={control}
-              render={({ field }) => (
-                <TextField
-                  id="stock-field"
-                  sx={{ backgroundColor: "#613D2B40", "& .MuiOutlinedInput-root": { color: "#613D2B" } }}
-                  label="Stock"
-                  variant="outlined"
-                  type="number"
-                  {...field}
-                />
-              )}
+              render={({ field }) => <TextField id="stock-field" sx={{ backgroundColor: "#613D2B40", "& .MuiOutlinedInput-root": { color: "#613D2B" } }} label="Stock" variant="outlined" type="number" {...field} />}
             />
 
             <Controller
               name="price"
               control={control}
-              render={({ field }) => (
-                <TextField
-                  id="price-field"
-                  sx={{ backgroundColor: "#613D2B40", "& .MuiOutlinedInput-root": { color: "#613D2B" } }}
-                  label="Price"
-                  variant="outlined"
-                  type="number"
-                  {...field}
-                />
-              )}
+              render={({ field }) => <TextField id="price-field" sx={{ backgroundColor: "#613D2B40", "& .MuiOutlinedInput-root": { color: "#613D2B" } }} label="Price" variant="outlined" type="number" {...field} />}
             />
 
             <Controller
               name="description"
               control={control}
               render={({ field }) => (
-                <TextField
-                  id="description-field"
-                  multiline
-                  rows={4}
-                  fullWidth
-                  sx={{ backgroundColor: "#613D2B40", "& .MuiOutlinedInput-root": { color: "#613D2B" } }}
-                  label="Description"
-                  variant="outlined"
-                  type="text"
-                  {...field}
-                />
+                <TextField id="description-field" multiline rows={4} fullWidth sx={{ backgroundColor: "#613D2B40", "& .MuiOutlinedInput-root": { color: "#613D2B" } }} label="Description" variant="outlined" type="text" {...field} />
               )}
             />
 
@@ -166,11 +133,7 @@ const AddProducts = () => {
               )}
             />
 
-            <Button
-              variant="contained"
-              sx={{ color: "white", marginTop: 2, width: "50%", backgroundColor: "#613D2B", "&:hover": { backgroundColor: "#613D2B" } }}
-              onClick={handleSubmit(submitProductData, onErrorSubmit)}
-            >
+            <Button variant="contained" sx={{ color: "white", marginTop: 2, width: "50%", backgroundColor: "#613D2B", "&:hover": { backgroundColor: "#613D2B" } }} onClick={handleSubmit(submitProductData, onErrorSubmit)}>
               Add Product
             </Button>
           </Box>
@@ -179,11 +142,7 @@ const AddProducts = () => {
         <Grid item xs={6}>
           {image && (
             <Box position="relative" sx={{ width: "80%" }}>
-              <img
-                src={image.preview}
-                alt="uploaded"
-                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "10px" }}
-              />
+              <img src={image.preview} alt="uploaded" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "10px" }} />
               <IconButton
                 aria-label="delete"
                 onClick={handleRemoveImage}

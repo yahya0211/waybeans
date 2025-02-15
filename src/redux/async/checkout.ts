@@ -69,7 +69,6 @@ export const updateTransactions = createAsyncThunk<ITransaction, { id: string; s
 
     return data;
   } catch (error: any) {
-    console.error("Error during transaction update:", error);
-    return rejectWithValue(error.response?.data || error.message || "Unknown error occurred");
+    return rejectWithValue(error.response?.data.message || error.message || "Unknown error occurred");
   }
 });

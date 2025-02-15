@@ -11,6 +11,7 @@ import NotAuthenticated from "../pages/auth/NotAuthenticated/NotAuthenticated";
 import Profile from "../pages/profile/Profile";
 import Income from "../pages/income/Income";
 import AddProducts from "../pages/product/AddProducts";
+import SellerRegisterPage from "../pages/auth/SellerRegister/Register";
 
 interface PrivateRoutesProops {
   element: JSX.Element;
@@ -71,6 +72,10 @@ const router: RouteObject[] = [
   {
     path: "auth/register",
     element: <RegisterPage />,
+  },
+  {
+    path: "auth/register/seller-register",
+    element: <SellerRegisterPage />,
   },
 ];
 export default router;

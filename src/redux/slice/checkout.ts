@@ -5,6 +5,8 @@ import { ITransaction } from "../type/app";
 const initialState = {
   transaction: {} as ITransaction,
   transactions: [] as ITransaction[],
+  isLoading: false,
+  error: "",
 };
 
 const checkoutSlice = createSlice({
@@ -14,39 +16,43 @@ const checkoutSlice = createSlice({
     addTransaction: (state, action) => {
       state.transaction = action.payload;
     },
+    updateTransaction: (state, action) => {
+      state.transaction = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(checkoutAsync.fulfilled, (state, action) => {
         state.transaction = action.payload;
       })
-      .addCase(checkoutAsync.rejected, (_, action) => {
-        console.error("Failed to checkout:", action.error);
+      .addCase(checkoutAsync.rejected, (state, action) => {
+        state.error = action.error.message || "Unknown error occurred";
       })
-      .addCase(checkoutAsync.pending, () => {
-        console.log("Checkout in progress...");
+      .addCase(checkoutAsync.pending, (action) => {
+        action.isLoading = true;
       })
-      .addCase(getTransaction.pending, () => {
-        console.log("Fetching transactions...");
+      .addCase(getTransaction.pending, (action) => {
+        action.isLoading = true;
       })
       .addCase(getTransaction.fulfilled, (state, action) => {
         state.transactions = action.payload;
       })
-      .addCase(getTransaction.rejected, (_, action) => {
-        console.error("Failed to fetch transactions:", action.error);
+      .addCase(getTransaction.rejected, (state, action) => {
+        state.error = action.error.message || "Unknown error occurred";
       })
-      .addCase(updateTransactions.pending, () => {
-        console.log("Updating transaction...");
+      .addCase(updateTransactions.pending, (state) => {
+        state.isLoading = true;
+        console.log("pending");
       })
       .addCase(updateTransactions.fulfilled, (state, action) => {
         const updatedTransaction = action.payload;
-        state.transactions = state.transactions.map((transaction) =>
-          transaction.id === updatedTransaction.id ? updatedTransaction : transaction
-        );
-        console.log("Transaction updated successfully.");
+        state.transactions = state.transactions.map((transaction) => (transaction.id === updatedTransaction.id ? updatedTransaction : transaction));
+        state.isLoading = false;
+        state.error = "";
       })
-      .addCase(updateTransactions.rejected, (_, action) => {
-        console.error("Failed to update transaction:", action.error);
+      .addCase(updateTransactions.rejected, (state, action) => {
+        state.error = action.payload || "Unknown error occurred";
+        state.isLoading = false;
       });
   },
 });

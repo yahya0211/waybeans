@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {  findProfile, ILoginResponse, IProfileState } from "../async/auth";
+import { findProfile, ILoginResponse, IProfileState } from "../async/auth";
 import { loginAsync } from "../async/auth";
 
 export interface IAuthState {
@@ -13,6 +13,9 @@ export interface IAuthState {
         fullName: string;
       }
     | undefined;
+
+  isLoading: boolean;
+  error: string | null;
 }
 
 const initialState: IAuthState = {
@@ -20,6 +23,8 @@ const initialState: IAuthState = {
   token: "",
   user: undefined,
   profile: {} as IProfileState,
+  isLoading: false,
+  error: "" || null,
 };
 
 const authSlice = createSlice({
@@ -48,12 +53,13 @@ const authSlice = createSlice({
       })
       .addCase(loginAsync.rejected, (state, action) => {
         console.error("Login failed", action);
+        state.error = action.error.message || "Unknown error occurred";
         state.isLogin = false;
         state.token = "";
         state.user = undefined;
       })
-      .addCase(loginAsync.pending, (_, action) => {
-        console.log(action);
+      .addCase(loginAsync.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(findProfile.fulfilled, (state, action) => {
         state.isLogin = true;
@@ -61,13 +67,14 @@ const authSlice = createSlice({
       })
       .addCase(findProfile.rejected, (state, action) => {
         console.log("Login failed", action);
-
+        state.error = action.error.message || "Unknown error occurred";
         state.isLogin = false;
         state.token = "";
         state.user = undefined;
       })
-      .addCase(findProfile.pending, (action) => {
+      .addCase(findProfile.pending, (state, action) => {
         console.log(action);
+        state.isLoading = true;
       });
   },
 });

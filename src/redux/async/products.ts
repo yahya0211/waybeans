@@ -36,3 +36,32 @@ export const addProducts = createAsyncThunk<IProduct, FormData, { rejectValue: s
     return rejectWithValue(error.message || "Failed to add products");
   }
 });
+
+export const deleteProducts = createAsyncThunk<IProduct, string, { rejectValue: string }>("deleteProduct", async (id, { rejectWithValue }) => {
+  try {
+    const response = await API.delete(`/product/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.message || "Failed to delete products");
+  }
+});
+
+export const updateProducts = createAsyncThunk<IProduct, { id: string; data: any }, { rejectValue: string }>("updateProduct", async ({ id, data }, { rejectWithValue }) => {
+  try {
+    const response = await API.patch(`/product/${id}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    console.log(response.data);
+
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.message || "Failed to update products");
+  }
+});

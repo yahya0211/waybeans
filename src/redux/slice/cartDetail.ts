@@ -1,9 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { cartIdUser } from "../async/carts";
 import { ICart } from "../type/app";
 
-const initialState: { cart: ICart } = {
+const initialState: { cart: ICart; isLoading: boolean; error: string | null } = {
   cart: {} as ICart,
+  isLoading: false,
+  error: null,
 };
 
 const cartDetailSlice = createSlice({
@@ -15,11 +17,12 @@ const cartDetailSlice = createSlice({
       .addCase(cartIdUser.fulfilled, (state, action) => {
         state.cart = action.payload;
       })
-      .addCase(cartIdUser.rejected, (_, action) => {
-        console.log("rejected:", action);
+      .addCase(cartIdUser.rejected, (state, action: PayloadAction<any>) => {
+        state.error = action.payload;
       })
-      .addCase(cartIdUser.pending, (_, action) => {
-        console.log("pending", action);
+      .addCase(cartIdUser.pending, (state) => {
+        console.log("pending", state);
+        state.isLoading = true;
       });
   },
 });

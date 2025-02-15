@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { addProducts, fetchProduct, fetchProductId } from "../async/products";
+import { addProducts, fetchProduct, fetchProductId, updateProducts } from "../async/products";
 import { IProduct, IProductState } from "../type/app";
 
 const initialState: IProductState = {
@@ -9,7 +9,7 @@ const initialState: IProductState = {
     description: "",
     nameProduct: "",
     price: 0,
-    productPhoto: "", 
+    productPhoto: "",
     stock: 0,
     qty: 0,
   },
@@ -23,6 +23,12 @@ const productSlice = createSlice({
   reducers: {
     ADD_PRODUCTS: (state, action: PayloadAction<IProduct>) => {
       state.product = [...state.product, action.payload];
+    },
+    DELETE_PRODUCTS: (state, action: PayloadAction<string>) => {
+      state.product = state.product.filter((product) => product.id !== action.payload);
+    },
+    UPDATE_PRODUCTS: (state, action: PayloadAction<IProduct>) => {
+      state.product = state.product.map((product) => (product.id === action.payload.id ? action.payload : product));
     },
   },
   extraReducers: (builder) => {
@@ -69,6 +75,21 @@ const productSlice = createSlice({
         console.log("rejected:", action.payload);
       })
       .addCase(addProducts.pending, (state) => {
+        state.isLoading = true;
+        console.log("pending");
+      })
+      .addCase(updateProducts.fulfilled, (state, action: PayloadAction<IProduct>) => {
+        state.isLoading = false;
+        state.error = null;
+        state.product = state.product.map((product) => (product.id === action.payload.id ? action.payload : product));
+        console.log("Product updated successfully:", action.payload);
+      })
+      .addCase(updateProducts.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || "Error to fetch product detail";
+        console.log("rejected:", action.payload);
+      })
+      .addCase(updateProducts.pending, (state) => {
         state.isLoading = true;
         console.log("pending");
       });

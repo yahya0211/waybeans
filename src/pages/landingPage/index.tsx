@@ -4,12 +4,14 @@ import Product from "./products/Product";
 import { useAppDispatch } from "../../redux";
 import { useEffect } from "react";
 import { cartUser } from "../../redux/async/carts";
+import { fetchProduct } from "../../redux/async/products";
 
 const LandingPage = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(cartUser());
+    dispatch(fetchProduct());
   }, [dispatch]);
 
   return (

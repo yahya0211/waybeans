@@ -7,23 +7,81 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useAppDispatch, useAppSelector } from "../../redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getTransaction } from "../../redux/async/checkout";
 import { updateTransactions } from "../../redux/async/checkout";
+import * as motion from "motion/react-client";
+import { boxStyle } from "../landingPage/products/Product";
 
 const STATUS_OPTIONS = ["WAITING_APPROVE", "SHIPPED", "IN_TRANSIT", "DELIVERED", "RETURNED", "CANCELLED"];
 
 const Income = () => {
   const dispatch = useAppDispatch();
   const transactions = useAppSelector((state) => state.checkout.transactions);
+  console.log(transactions);
+
+  const handlingState = useAppSelector((state) => state.checkout);
+  const [isLoading, setIsLoading] = useState(true);
+  const handleStatusChange = (transactionId: string, newStatus: string) => {
+    dispatch(updateTransactions({ id: transactionId, status: newStatus }));
+    location.reload();
+  };
 
   useEffect(() => {
     dispatch(getTransaction());
+    setIsLoading(false);
   }, [dispatch]);
 
-  const handleStatusChange = (transactionId: string, newStatus: string) => {
-    dispatch(updateTransactions({ id: transactionId, status: newStatus }));
-  };
+  if (handlingState.isLoading && isLoading === true) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "30vh",
+          flexDirection: "column",
+          gap: "10px",
+        }}
+      >
+        <motion.div
+          animate={{
+            scale: [1, 1.5, 1.5, 1, 1],
+            rotate: [0, 0, 270, 270, 0],
+            borderRadius: ["20%", "50%", "50%", "20%", "20%"],
+          }}
+          transition={{
+            duration: 1.5,
+            ease: "easeInOut",
+            times: [0, 0.25, 0.5, 0.75, 1],
+            repeat: Infinity,
+            repeatDelay: 0.5,
+          }}
+          style={boxStyle}
+        />
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0.3, 1, 0.3] }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+          }}
+        >
+          <Typography
+            variant="h6"
+            style={{
+              color: "#613D2B",
+              fontWeight: "bold",
+              letterSpacing: "1px",
+            }}
+          >
+            Now Loading...
+          </Typography>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <Box display={"flex"} flexDirection={"column"} marginX={15} marginTop={10} gap={2}>
@@ -49,7 +107,7 @@ const Income = () => {
                 <TableCell align="center">{transaction.name}</TableCell>
                 <TableCell align="center">{transaction.address}</TableCell>
                 <TableCell align="center">{transaction.postCode}</TableCell>
-                <TableCell align="center">{transaction.product ? transaction.product.nameProduct : "No Product Info"}</TableCell>
+                <TableCell align="center">{transaction.product ? transaction.product.nameProduct : ""}</TableCell>
                 <TableCell align="center">
                   <Select value={transaction.status} onChange={(e) => handleStatusChange(transaction.id, e.target.value)}>
                     {STATUS_OPTIONS.map((status) => (

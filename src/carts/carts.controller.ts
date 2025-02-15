@@ -46,8 +46,7 @@ export class CartsController {
     type: CreateCartDto,
   })
   @ApiBadRequestResponse({ description: 'Product is availabale', status: 400 })
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BUYER)
+  @UseGuards(JwtAuthGuard)
   @Post(':productId')
   async create(
     @Body() createCartDto: CreateCartDto,
@@ -75,8 +74,7 @@ export class CartsController {
     }
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BUYER)
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findAll(@Request() req) {
     const userId = req.user.id;
@@ -84,8 +82,7 @@ export class CartsController {
     return this.cartsService.findAll(userId);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BUYER)
+  @UseGuards(JwtAuthGuard)
   @Get('findId/:id')
   async findOne(@Param('id') id: string) {
     return this.cartsService.findOne(id);
@@ -97,15 +94,13 @@ export class CartsController {
     type: UpdateCartDto,
   })
   @ApiBadRequestResponse({ description: 'Cart is undefined', status: 400 })
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BUYER)
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto) {
     return this.cartsService.update(id, updateCartDto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.BUYER)
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.cartsService.remove(id);

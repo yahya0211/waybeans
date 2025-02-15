@@ -71,7 +71,6 @@ model Transaction {
   cartId       String            @unique
   cart         Cart              @relation(fields: [cartId], references: [id])
   status       TransactionStatus
-  action       Boolean?
   productId    String
   product      Product           @relation(fields: [productId], references: [id])
   userId       String

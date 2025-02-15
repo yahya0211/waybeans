@@ -62,7 +62,6 @@ CREATE TABLE "Transaction" (
     "productPrice" INTEGER NOT NULL,
     "cartId" TEXT NOT NULL,
     "status" "TransactionStatus" NOT NULL,
-    "action" BOOLEAN,
     "productId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,

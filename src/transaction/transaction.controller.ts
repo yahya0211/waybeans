@@ -57,7 +57,7 @@ export class TransactionController {
     status: 400,
   })
   @ApiConsumes('multipart/form-data')
-  @UseGuards(JwtAuthGuard) // @UseGuards(LocalAuthGuard)
+  @UseGuards(JwtAuthGuard) 
   @UseInterceptors(FileInterceptor('attachment'))
   async create(
     @Body() createTransactionDto: CreateTransactionDto,

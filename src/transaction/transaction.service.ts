@@ -127,20 +127,20 @@ export class TransactionService {
       include: {
         product: true,
       },
-      orderBy:{
-        createdAt: 'desc',
-      }
+      orderBy: {
+        createdAt: 'asc',
+      },
     });
   }
 
-  async findTransactionBuyer(){
+  async findTransactionBuyer() {
     return await this.prisma.transaction.findMany({
       include: {
         product: true,
       },
-      orderBy:{
+      orderBy: {
         createdAt: 'desc',
-      }
+      },
     });
   }
 
@@ -161,15 +161,60 @@ export class TransactionService {
   }
 
   async update(id: string, updateTransactionDto: UpdateTransactionDto) {
-    return await this.prisma.transaction.update({
+    const currentTransaction = await this.prisma.transaction.findUnique({
+      where: { id },
+      include: { cart: true }, 
+    });
+
+    if (!currentTransaction) {
+      throw new Error('Transaction not found');
+    }
+
+    const cartStock = await this.prisma.cart.findUnique({
+      where: { id: currentTransaction.cartId }, 
+    });
+
+    if (!cartStock) {
+      throw new Error('Cart not found');
+    }
+
+    const productStock = await this.prisma.product.findUnique({
+      where: { id: cartStock.productId },
+    });
+
+    if (!productStock) {
+      throw new Error('Product not found');
+    }
+
+    const updatedTransaction = await this.prisma.transaction.update({
       where: { id },
       data: {
-        pay: updateTransactionDto.pay,
         status: updateTransactionDto.status,
-        action: updateTransactionDto.action,
-        updatedAt: new Date(),
       },
-    });
+    })
+
+    if (productStock.stock >= cartStock.qty && !currentTransaction.pay) {
+      const stockUpdated = productStock.stock - cartStock.qty;
+      const updateTransaction = await this.prisma.transaction.update({
+        where: { id },
+        data: {
+          pay: true,
+          status: updateTransactionDto.status,
+          updatedAt: new Date(),
+        },
+      });
+
+      await this.prisma.product.update({
+        where: { id: productStock.id },
+        data: {
+          stock: stockUpdated,
+        },
+      });
+      return updateTransaction;
+    } else {
+      console.log('updateStock', productStock.stock);
+      return currentTransaction;
+    }
   }
 
   async remove(id: string) {

@@ -90,6 +90,7 @@ export class CartsService {
         where: { id },
         include: {
           product: true,
+          transaction: true,
         },
       });
 
@@ -100,6 +101,11 @@ export class CartsService {
       if (findCart.product.stock - parseInt(updateCartDto.qty) < 0) {
         throw new HttpException(`Stock not available`, HttpStatus.CONFLICT);
       }
+
+      if (findCart.transaction) {
+        throw new HttpException(`Transaction already exist you cannot update this cart ${id}`, HttpStatus.CONFLICT);
+      }
+
 
       const totalOrder = parseInt(updateCartDto.qty);
       const totalPrice = totalOrder * findCart.product.price;

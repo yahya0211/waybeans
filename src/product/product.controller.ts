@@ -39,7 +39,6 @@ export class ProductController {
     private readonly jwtService: JwtService,
   ) {}
 
-
   @ApiCreatedResponse({
     status: 201,
     description: 'The product has been successfully created.',
@@ -66,10 +65,8 @@ export class ProductController {
       throw new UnauthorizedException('token invalid');
     }
 
-
     try {
       const decoded = this.jwtService.decode(token);
-      
 
       const userId = decoded.id;
 
@@ -91,9 +88,11 @@ export class ProductController {
     return this.productService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SELLER)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+    return this.productService.update(id, updateProductDto);
   }
 
   @ApiBearerAuth()

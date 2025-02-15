@@ -116,8 +116,16 @@ export class AuthService {
         email: true,
         photoProfile: true,
         role: true,
-        cart: true,
-        transaction: true,
+        cart: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        transaction: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     });
     return user;

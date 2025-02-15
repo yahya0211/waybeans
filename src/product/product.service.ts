@@ -18,7 +18,6 @@ export class ProductService {
     try {
       let imageUrl: string = dto.productPhoto || '';
 
-
       if (file) {
         const filePath = file as unknown as Express.Multer.File;
 
@@ -55,7 +54,11 @@ export class ProductService {
   }
 
   async findAll() {
-    return this.prisma.product.findMany();
+    return this.prisma.product.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   async findOne(id: string) {
@@ -64,11 +67,30 @@ export class ProductService {
     });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  update(id: string, updateProductDto: UpdateProductDto) {
+    const findProduct = this.prisma.product.findUnique({
+      where: { id },
+    });
+
+    if (!findProduct) {
+      throw new Error('Product not found');
+    }
+
+    return this.prisma.product.update({
+      where: { id },
+      data: {
+        stock: updateProductDto.stock,
+        price: updateProductDto.price,
+      },
+    });
   }
 
   async remove(id: string) {
+    await this.prisma.transaction.deleteMany({
+      where: {
+        productId: id,
+      },
+    });
     await this.prisma.cart.deleteMany({
       where: {
         productId: id,
